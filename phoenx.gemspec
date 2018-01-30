@@ -13,12 +13,11 @@ Gem::Specification.new do |spec|
   spec.summary       = "Phoenx generates Xcode projects (*.xcodeproj) and workspaces (*.xcworkspace) for iOS, OSX, and tvOS using specification and xcconfig files. Specify your project once and never worry about broken Xcode projects or merge conflicts in pbxproj files ever again."
   spec.homepage      = "https://www.github.com/jensmeder/Phoenx"
   spec.license       = "MIT"
-
   spec.files         = Dir["lib/**/*.rb"]
 
   spec.executables   << "phoenx"
 
-  spec.add_runtime_dependency "xcodeproj", "~> 1.4.0"
+  spec.add_runtime_dependency "xcodeproj", "~> 1.4"
   spec.add_runtime_dependency "colored", "~> 1.2"
   
   spec.add_development_dependency "bundler", "~> 1.11"
