@@ -522,7 +522,11 @@ module Phoenx
 			@project.targets << @target
 			@target.name = @target_spec.name
 			@target.product_name = @target_spec.name
-			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
+			if @target_spec.type == :ui_test
+				@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:ui_test_bundle]
+			else
+				@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
+			end
 			@target.build_configuration_list = Xcodeproj::Project::ProjectHelper.configuration_list(@project, @main_target_spec.platform, @main_target_spec.version)
 			product_ref = @project.products_group.new_reference(@target_spec.name + '.' + XCTEST_EXTENSION, :built_products)
 			product_ref.include_in_index = '0'
