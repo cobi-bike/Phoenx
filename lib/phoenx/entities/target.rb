@@ -88,9 +88,10 @@ module Phoenx
 			yield(self)
 		end
 		
-		def test_target(name, &block)
+		def test_target(name, type, &block)
 			target = Phoenx::TestTarget.new &block
 			target.name = name
+			target.type = type
 			@test_targets << target
 		end
 		
@@ -112,7 +113,11 @@ module Phoenx
 	
 	class TestTarget < AbstractTarget
 	
+		:unit_test
+		:ui_test
+
 		attr_reader :additional_test_targets
+		attr_accessor :type
 
 		public
 	

@@ -97,9 +97,14 @@ module Phoenx
 					variant_group = parent_group[File.basename(source)]
 					if variant_group == nil
 						variant_group = parent_group.new_variant_group(File.basename(source))
+					end
+					if not self.target.resources_build_phase.include?(variant_group)
 						self.target.resources_build_phase.add_file_reference(variant_group)
 					end
-					variant_group.new_file(parts[translation_folder_index..parts.count].join('/'))
+					file_path = parts[translation_folder_index..parts.count].join('/')
+					unless variant_group.find_file_by_path(file_path) != nil
+						variant_group.new_file(file_path)
+					end
 				else
 					group = @project.main_group.find_subpath(File.dirname(source), false)
 					unless group == nil
@@ -186,14 +191,12 @@ module Phoenx
 
 	class TestableTargetBuilder < TargetBuilder
 	
-		:test_target
+		:test_targets
 		:schemes
 		
 		def generate_target_scheme
 			# Generate main scheme
 			scheme = Xcodeproj::XCScheme.new
-			scheme.configure_with_targets(self.target, @test_target)
-			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 			self.configure_scheme(scheme, @target_spec)
 			@target_spec.test_targets.each do |test_target_spec|
 				test_target_spec.additional_test_targets.each do |additional_target|
@@ -237,8 +240,6 @@ module Phoenx
 		def add_schemes
 			@target_spec.schemes.each do |s|
 				scheme = Xcodeproj::XCScheme.new 
-				scheme.configure_with_targets(self.target, @test_target)
-				scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
 				self.configure_scheme(scheme, s)
 
 				@schemes << scheme
@@ -247,6 +248,13 @@ module Phoenx
 		end
 
 		def configure_scheme(scheme, spec)
+			scheme.configure_with_targets(self.target, nil)
+			@test_targets.each do |test_target|
+				scheme.build_action.add_entry Xcodeproj::XCScheme::BuildAction::Entry.new(test_target)
+      			scheme.test_action.add_testable Xcodeproj::XCScheme::TestAction::TestableReference.new(test_target)
+			end
+			scheme.test_action.code_coverage_enabled = @target_spec.code_coverage_enabled
+
 			if spec.archive_configuration
 				archive_configuration = self.target.build_configuration_list[spec.archive_configuration]
 				unless archive_configuration
@@ -284,12 +292,13 @@ module Phoenx
 			@target_spec.test_targets.each do |test_target_spec|
 				builder = TestTargetBuilder.new(@target, @project, test_target_spec, @project_spec, @target_spec, self.framework_files)
 				builder.build
-				@test_target = builder.target
+				@test_targets << builder.target
 			end	
 		end
 		
 		def build
 			@schemes = []
+			@test_targets = []
 			puts ">> Target ".green + @target_spec.name.bold
 			self.clean_target
 			self.add_sources
@@ -524,7 +533,11 @@ module Phoenx
 			@project.targets << @target
 			@target.name = @target_spec.name
 			@target.product_name = @target_spec.name
-			@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
+			if @target_spec.type == :ui_test
+				@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:ui_test_bundle]
+			else
+				@target.product_type = Xcodeproj::Constants::PRODUCT_TYPE_UTI[:unit_test_bundle]
+			end
 			@target.build_configuration_list = Xcodeproj::Project::ProjectHelper.configuration_list(@project, @main_target_spec.platform, @main_target_spec.version)
 			product_ref = @project.products_group.new_reference(@target_spec.name + '.' + XCTEST_EXTENSION, :built_products)
 			product_ref.include_in_index = '0'
