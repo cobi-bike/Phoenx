@@ -97,9 +97,14 @@ module Phoenx
 					variant_group = parent_group[File.basename(source)]
 					if variant_group == nil
 						variant_group = parent_group.new_variant_group(File.basename(source))
+					end
+					if not self.target.resources_build_phase.include?(variant_group)
 						self.target.resources_build_phase.add_file_reference(variant_group)
 					end
-					variant_group.new_file(parts[translation_folder_index..parts.count].join('/'))
+					file_path = parts[translation_folder_index..parts.count].join('/')
+					unless variant_group.find_file_by_path(file_path) != nil
+						variant_group.new_file(file_path)
+					end
 				else
 					group = @project.main_group.find_subpath(File.dirname(source), false)
 					unless group == nil
