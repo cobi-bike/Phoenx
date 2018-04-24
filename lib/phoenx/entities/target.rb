@@ -88,7 +88,7 @@ module Phoenx
 			yield(self)
 		end
 		
-		def test_target(name, type, &block)
+		def test_target(name, type = :unit_test, &block)
 			target = Phoenx::TestTarget.new &block
 			target.name = name
 			target.type = type
