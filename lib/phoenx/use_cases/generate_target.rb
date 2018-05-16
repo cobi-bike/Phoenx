@@ -200,7 +200,7 @@ module Phoenx
 			self.configure_scheme(scheme, @target_spec)
 			@target_spec.test_targets.each do |test_target_spec|
 				test_target_spec.additional_test_targets.each do |additional_target|
-					proj = Xcodeproj::Project::open(additional_target.path)
+					proj = Phoenx.open_project(additional_target.path)
 					target = Phoenx.target_for_name(proj, additional_target.target_name)
 					scheme.test_action.add_testable Xcodeproj::XCScheme::TestAction::TestableReference.new(target, @project) if target
 				end
@@ -229,7 +229,7 @@ module Phoenx
 					unless file_ref != nil
 						frameworks_group.new_file(dp.path)
 					end
-					proj = Xcodeproj::Project::open(dp.path)
+					proj = Phoenx.open_project(dp.path)
 				end
 				target = Phoenx.target_for_name(proj,dp.target_name)
 				abort "Missing target for dependency '#{dp.path}' ".red + dp.target_name.bold unless target
@@ -339,7 +339,7 @@ module Phoenx
 				else
 					# Copy external products
 					proj_file = frameworks_group.find_file_by_path(dp.path)
-					proj = Xcodeproj::Project::open(dp.path)
+					proj = Phoenx.open_project(dp.path)
 					target = Phoenx.target_for_name(proj,dp.target_name)
 					proj_file.file_reference_proxies.each do |e|
 						if e.remote_ref.remote_global_id_string == target.product_reference.uuid

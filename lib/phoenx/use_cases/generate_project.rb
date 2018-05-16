@@ -15,7 +15,7 @@ module Phoenx
 				puts `./#{pre_script}`
 			end
 			# Build Project
-			@project = Xcodeproj::Project::new(@project_spec.project_file_name)
+			@project = Phoenx.create_project(@project_spec.project_file_name)
 			self.generate_configurations
 			self.add_config_files
 			self.add_support_files

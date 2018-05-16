@@ -68,4 +68,22 @@ module Phoenx
 		return nil
 	end
 
+	$global_project_cache = Hash.new
+
+	def Phoenx.open_project(path)
+		name = path.split('/').last 
+		if $global_project_cache.key?(name)
+			return $global_project_cache[name]
+		end
+		project = Xcodeproj::Project::open(path)
+		$global_project_cache[name] = project
+		return project
+	end
+
+	def Phoenx.create_project(name)
+		project = Xcodeproj::Project::new(name)
+		$global_project_cache[name] = project
+		return project
+	end
+
 end
