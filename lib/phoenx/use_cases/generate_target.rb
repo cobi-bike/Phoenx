@@ -301,11 +301,11 @@ module Phoenx
 			@test_targets = []
 			puts ">> Target ".green + @target_spec.name.bold
 			self.clean_target
+			self.add_sub_projects
 			self.add_sources
 			Phoenx::Target::HeaderBuilder.new(@project, @target, @target_spec).build
 			self.add_resources
 			self.add_config_files
-			self.add_sub_projects
 			self.add_system_dependencies
 			self.add_frameworks_and_libraries
 			self.add_build_phase_scripts
