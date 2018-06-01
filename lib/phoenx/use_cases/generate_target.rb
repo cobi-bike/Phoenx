@@ -207,7 +207,7 @@ module Phoenx
 			end
 			
 			@schemes << scheme
-			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
+			scheme.save_as @project_spec.project_file_name, @target_spec.name
 			return scheme
 		end
 		
@@ -243,7 +243,7 @@ module Phoenx
 				self.configure_scheme(scheme, s)
 
 				@schemes << scheme
-				scheme.save_as @project_spec.project_file_name, s.name, false
+				scheme.save_as @project_spec.project_file_name, s.name
 			end
 		end
 
