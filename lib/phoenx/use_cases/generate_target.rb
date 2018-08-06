@@ -452,8 +452,8 @@ module Phoenx
 		def build
 			self.validate
 			@target = @project.new_target(@target_spec.target_type, @target_spec.name, @target_spec.platform, @target_spec.version)
-			self.add_extension_targets	
 			super()
+			self.add_extension_targets
 		end
 		
 		def target
