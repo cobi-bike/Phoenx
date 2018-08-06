@@ -20,6 +20,7 @@ module Phoenx
 				self.add_project_headers
 				self.add_private_headers
 				self.generate_umbrella_header
+				self.move_header_build_phase_to_top
 			end
 			
 			def add_public_headers
@@ -71,6 +72,10 @@ module Phoenx
 				file = Phoenx.get_or_add_file(@project, header)
 				build_file = @target.headers_build_phase.add_file_reference(file, true)
 				build_file.settings = attributes
+			end
+
+			def move_header_build_phase_to_top
+				self.target.build_phases.move(self.target.headers_build_phase, 0)
 			end
 
 		end
