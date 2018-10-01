@@ -3,7 +3,7 @@ require 'xcodeproj'
 module Phoenx
 
 	def Phoenx.is_bundle?(file)
-		return file.include?('xcassets') || file.include?('bundle') || file.include?('playground') || file.include?('intentdefinition')
+		return file.include?('xcassets') || file.include?('bundle') || file.include?('playground')
 	end
 
 	def Phoenx.is_translation_folder?(file)
