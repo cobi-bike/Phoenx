@@ -95,13 +95,13 @@ module Phoenx
 					parent_path = parts[0..translation_folder_index - 1].join('/')
 					parent_group = @project.main_group.find_subpath(parent_path)
 					base_folder = File.join(parent_path, "Base.lproj", File.basename(source,".*")) + ".{intentdefinition}"
-					if Dir[base_folder].empty?
-						group_name = File.basename(source)
-						is_intent = false
-					else 
-						group_name = File.basename(Dir[base_folder].first)
-						is_intent = true
+					is_intent = !Dir[base_folder].empty?
+					if is_intent
+					    group_name = File.basename(Dir[base_folder].first)
+					else
+					    group_name = File.basename(source)
 					end
+
 					variant_group = parent_group[group_name]
 					if variant_group == nil
 						variant_group = parent_group.new_variant_group(group_name)
