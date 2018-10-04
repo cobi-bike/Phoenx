@@ -94,12 +94,23 @@ module Phoenx
 					translation_folder_index = parts.index { |part| Phoenx.is_translation_folder?(part) }
 					parent_path = parts[0..translation_folder_index - 1].join('/')
 					parent_group = @project.main_group.find_subpath(parent_path)
-					variant_group = parent_group[File.basename(source)]
-					if variant_group == nil
-						variant_group = parent_group.new_variant_group(File.basename(source))
+					base_folder = File.join(parent_path, "Base.lproj", File.basename(source,".*")) + ".{intentdefinition}"
+					is_intent = !Dir[base_folder].empty?
+					if is_intent
+					    group_name = File.basename(Dir[base_folder].first)
+					else
+					    group_name = File.basename(source)
 					end
-					if not self.target.resources_build_phase.include?(variant_group)
+
+					variant_group = parent_group[group_name]
+					if variant_group == nil
+						variant_group = parent_group.new_variant_group(group_name)
+					end
+					if not is_intent and not self.target.resources_build_phase.include?(variant_group)
 						self.target.resources_build_phase.add_file_reference(variant_group)
+					end
+					if is_intent and not self.target.source_build_phase.include?(variant_group)
+						self.target.source_build_phase.add_file_reference(variant_group)
 					end
 					file_path = parts[translation_folder_index..parts.count].join('/')
 					unless variant_group.find_file_by_path(file_path) != nil
