@@ -234,7 +234,7 @@ module Phoenx
 		end
 
 		def configure_scheme(scheme, spec)
-			scheme.configure_with_targets(self.target, nil)
+			scheme.configure_with_targets(self.target, nil, :launch_target => true)
 			@test_targets.each do |test_target|
 				scheme.build_action.add_entry Xcodeproj::XCScheme::BuildAction::Entry.new(test_target)
       			scheme.test_action.add_testable Xcodeproj::XCScheme::TestAction::TestableReference.new(test_target)
