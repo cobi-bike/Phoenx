@@ -233,8 +233,8 @@ module Phoenx
 			end
 		end
 
-		def configure_scheme(scheme, spec)
-			scheme.configure_with_targets(self.target, nil, :launch_target => true)
+		def configure_scheme(scheme, spec, launch_target = true)
+			scheme.configure_with_targets(self.target, nil, :launch_target => launch_target)
 			@test_targets.each do |test_target|
 				scheme.build_action.add_entry Xcodeproj::XCScheme::BuildAction::Entry.new(test_target)
       			scheme.test_action.add_testable Xcodeproj::XCScheme::TestAction::TestableReference.new(test_target)
@@ -436,7 +436,7 @@ module Phoenx
 			scheme.launch_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
       		scheme.profile_action.buildable_product_runnable = Xcodeproj::XCScheme::RemoteRunnable.new(@target, 2, 'com.apple.Carousel')
 
-			self.configure_scheme(scheme, @target_spec)
+			self.configure_scheme(scheme, @target_spec, false)
 			
 			@schemes << scheme
 			scheme.save_as @project_spec.project_file_name, @target_spec.name, false
